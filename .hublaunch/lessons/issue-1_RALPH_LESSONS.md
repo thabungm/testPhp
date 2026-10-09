@@ -82,3 +82,34 @@ This file persists context across agent sessions. Update it as you work.
 - Conclusion: no regression exists in the repo. If this exact report keeps recurring,
   the fix already landed in this repo's `ralph.md`; any further recurrence points to the
   harness re-running against a pre-fix snapshot/cache rather than this branch's HEAD.
+
+## 2026-10-09 Re-check #5 (found the real source of the stale snapshot)
+- Same report again (line number now 3166, was 2703 before — confirms each report comes
+  from a freshly re-uploaded `ralph-run.sh`, not a cached script).
+- Traced `get_ralph_commands`/`run_regression_step` in `ralph-run.sh`: they read
+  `RALPH_MD_ABS = realpath("./ralph.md")` — i.e. THIS repo's real, already-fixed
+  `ralph.md`. Confirmed its `RALPH_CHECK_COMMANDS`/`RALPH_REGRESSION_COMMANDS` blocks
+  still contain the direct commands (no `make`), exactly as fixed in `7304946`.
+- Found the actual stale artifact: `.hublaunch/ralph.effective.md`. It's a worker-bundled
+  file ("maintained by the Hula team... Do not edit directly in user repositories") that
+  concatenates the harness system prompt with a SNAPSHOT of ralph.md's repo-supplied
+  section taken at container build time — and that snapshot still has `make lint` /
+  `make test`. BUT: grepped `ralph-run.sh` and confirmed this file is never read by
+  `get_ralph_commands`/`run_regression_step`/`run_check_step` — it's excluded from git
+  (`.hublaunch/ralph.effective.md` is added to `.git/info/exclude`) and is purely
+  informational context bundled for the agent, not a command source. So it is NOT the
+  cause of the `make: command not found` error and must NOT be edited (per its own
+  "do not edit" notice) — editing it would not fix anything and violates the file's
+  stated ownership.
+- Re-verified directly: `which make` → absent (confirmed). Lint via `find src -name
+  "*.php" -print0 | xargs -0 -n1 php -l` → clean. `vendor/bin/phpunit tests` → 7/7 pass.
+  `git status --porcelain` → clean, no code changes needed.
+- Updated conclusion: the `make: command not found` line comes from somewhere in the
+  HubLaunch worker's OWN invocation path (outside this repo's `ralph.md`/`ralph-run.sh`
+  command-extraction logic verified above) — possibly a harness-side step not driven by
+  `RALPH_CHECK_COMMANDS`/`RALPH_REGRESSION_COMMANDS` at all, or leftover from an older
+  cached run. There is nothing left to fix inside this repository; every command path
+  this repo controls (`ralph.md`, `Makefile`, `src/`, `tests/`) is already make-free
+  where it matters and passes cleanly. Future occurrences of this identical message
+  should be treated as a harness/worker-side issue, not a repo regression, unless the
+  harness's own source (not available in this repo) is inspectable.
