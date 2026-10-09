@@ -212,13 +212,17 @@ serve:
 	php -S localhost:8000 -t public
 ```
 
-- [ ] In `README.md`, replace the intro sentence
+- [ ] In `README.md`, replace the intro paragraph (the single line directly under the `# test-php-calculator` heading), which currently reads:
 
-  `A minimal, headless PHP calculator class (`add`, `subtract`, `multiply`, `divide`). No web server, no CLI — logic lives in `src/Calculator.php` and is exercised by `tests/CalculatorTest.php` (PHPUnit). Dependency management via Composer.`
+```markdown
+A minimal, headless PHP calculator class (`add`, `subtract`, `multiply`, `divide`). No web server, no CLI — logic lives in `src/Calculator.php` and is exercised by `tests/CalculatorTest.php` (PHPUnit). Dependency management via Composer.
+```
 
-  with
+  with:
 
-  `A minimal PHP calculator class (`add`, `subtract`, `multiply`, `divide`) plus a static "Coming Soon" landing page. Logic lives in `src/Calculator.php` and is exercised by `tests/CalculatorTest.php` (PHPUnit); the landing page is `public/index.html`. Dependency management via Composer.`
+```markdown
+A minimal PHP calculator class (`add`, `subtract`, `multiply`, `divide`) plus a static "Coming Soon" landing page. Logic lives in `src/Calculator.php` and is exercised by `tests/CalculatorTest.php` (PHPUnit); the landing page is `public/index.html`. Dependency management via Composer.
+```
 
 - [ ] In `README.md`, append this section after the existing `## Verification` section:
 
