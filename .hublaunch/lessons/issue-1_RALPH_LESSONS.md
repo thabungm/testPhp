@@ -136,3 +136,15 @@ This file persists context across agent sessions. Update it as you work.
 - No repo change made (6th time this exact non-actionable report has recurred). If seen
   again, this is almost certainly not fixable from inside the repo — only from the
   HubLaunch worker/harness side that invokes `ralph-run.sh`.
+
+## 2026-10-09 Re-check #7
+- Identical recurrence of the same non-actionable `make: command not found` report
+  (empty `FAILED REGRESSION OUTPUT`, single-line `FULL OUTPUT`). Same as re-checks
+  #1-6.
+- Re-verified from scratch: `which make` → absent. `ralph.md`'s
+  `RALPH_CHECK_COMMANDS`/`RALPH_REGRESSION_COMMANDS` fences still contain only the
+  direct `php -l` / `vendor/bin/phpunit tests` commands (fixed in `7304946`), no
+  `make`. Lint clean, `vendor/bin/phpunit tests` → 7/7 pass, 7 assertions. `git status
+  --porcelain` → clean. No code changes made.
+- Standing conclusion unchanged: this repo's command paths are make-free and passing;
+  the `make` invocation originates outside this repo's control (harness/worker side).
