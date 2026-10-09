@@ -113,3 +113,26 @@ This file persists context across agent sessions. Update it as you work.
   where it matters and passes cleanly. Future occurrences of this identical message
   should be treated as a harness/worker-side issue, not a repo regression, unless the
   harness's own source (not available in this repo) is inspectable.
+
+## 2026-10-09 Re-check #6 (code-level proof it can't come from ralph.md path)
+- Same report again, empty `FAILED REGRESSION OUTPUT` block, `FULL OUTPUT` just the one
+  `make: command not found` line (line number drifts each time — 2703 → 3166 → ...,
+  confirming it's a freshly fetched `ralph-run.sh` each run, not a cached copy).
+- This time traced the actual bash logic instead of just re-running the test suite:
+  `get_ralph_commands()` (ralph-run.sh ~2680) extracts commands by `sed`-slicing between
+  the `<!-- RALPH_*_COMMANDS` / `_END -->` fences in `$RALPH_MD_ABS` (= `realpath
+  ./ralph.md`) and `_run_command_block()` (~2699) just `eval`s each resolved line — there
+  is NO hardcoded `make` anywhere in that path, and `grep -n make ralph-run.sh` finds only
+  comments (e.g. "makes the cap win", "makes them exit 1"), never an invoked command.
+  `ralph.md`'s `RALPH_CHECK_COMMANDS`/`RALPH_REGRESSION_COMMANDS` blocks (fixed in
+  `7304946`) still contain only `php -l` / `vendor/bin/phpunit tests` — no `make`. So by
+  construction this repo's check/regression steps cannot be the source of a `make`
+  invocation; the string must originate from a harness/worker-side step this repo's
+  source doesn't contain (e.g. a pre-flight or setup step outside `ralph.md`'s command
+  blocks).
+- Direct re-verification, unchanged result: `which make` → not found; lint
+  (`find src -name "*.php" -print0 | xargs -0 -n1 php -l`) → clean; `vendor/bin/phpunit
+  tests` → 7/7 pass, 7 assertions, OK; `git status --porcelain` → clean.
+- No repo change made (6th time this exact non-actionable report has recurred). If seen
+  again, this is almost certainly not fixable from inside the repo — only from the
+  HubLaunch worker/harness side that invokes `ralph-run.sh`.
