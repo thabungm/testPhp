@@ -1,4 +1,4 @@
-.PHONY: install lint test
+.PHONY: install lint test serve
 
 install:
 	composer install
@@ -8,3 +8,6 @@ lint:
 
 test:
 	vendor/bin/phpunit tests
+
+serve:
+	php -S localhost:8000 -t public
