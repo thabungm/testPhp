@@ -34,3 +34,11 @@ This file persists context across agent sessions. Update it as you work.
 
 ## Next Steps
 - Done. Nothing outstanding.
+
+## 2026-10-09 Re-check
+- Reported error was just `ralph-run.sh: line 2703: make: command not found` — not an actual
+  lint/code error, just the harness trying to invoke the absent `make` binary.
+- Ran the real lint recipe directly (`find src -name "*.php" -print0 | xargs -0 -n1 php -l`):
+  zero errors/warnings. Also ran `vendor/bin/phpunit tests`: 7/7 pass.
+- No code changes were needed. If this keeps recurring, the fix belongs in ralph-run.sh /
+  CI config (install `make` or call the underlying commands directly), not in this repo's code.
