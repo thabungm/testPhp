@@ -65,3 +65,20 @@ This file persists context across agent sessions. Update it as you work.
 - Re-ran both new commands directly: lint clean, 7/7 tests pass. No src/public/tests changes.
 - If `make` ever IS available in this environment and this needs to change back, confirm
   `which make` succeeds before reverting.
+
+## 2026-10-09 Re-check #4 (post-fix verification)
+- This regression report (`make: command not found` at an `eval "$CMD"` line inside
+  ralph-run.sh's regression step) is the SAME stale signal as the prior 3 occurrences —
+  it was already root-caused and fixed in commit `7304946` by rewriting the
+  `RALPH_CHECK_COMMANDS` / `RALPH_REGRESSION_COMMANDS` blocks in `ralph.md` to call
+  `php -l` / `vendor/bin/phpunit tests` directly instead of `make lint` / `make test`.
+- Verified current `ralph.md` state: the command blocks already contain the direct
+  commands (no `make` inside the `<!-- RALPH_*_COMMANDS -->` fences). Only the
+  human-facing `## Setup`/`## Verification` prose and `Makefile` still mention `make`,
+  which is intentional (for humans with `make` on PATH) and not read by the harness.
+- Re-ran both commands directly: lint clean (`No syntax errors detected in
+  src/Calculator.php`), `vendor/bin/phpunit tests` → 7/7 tests, 7 assertions, OK.
+  `git status` clean — no code changes were needed.
+- Conclusion: no regression exists in the repo. If this exact report keeps recurring,
+  the fix already landed in this repo's `ralph.md`; any further recurrence points to the
+  harness re-running against a pre-fix snapshot/cache rather than this branch's HEAD.
