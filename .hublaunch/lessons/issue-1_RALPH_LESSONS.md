@@ -42,3 +42,10 @@ This file persists context across agent sessions. Update it as you work.
   zero errors/warnings. Also ran `vendor/bin/phpunit tests`: 7/7 pass.
 - No code changes were needed. If this keeps recurring, the fix belongs in ralph-run.sh /
   CI config (install `make` or call the underlying commands directly), not in this repo's code.
+
+## 2026-10-09 Re-check #2
+- Identical recurrence: `make` still not installed (`which make` → not found). Confirmed this
+  is purely an environment gap, not a regression — ralph-run.sh calls `make lint` without
+  checking for the binary first.
+- Direct lint + test rerun: same zero-error, 7/7-pass result as before. No src/public/tests
+  changes made this pass either.
