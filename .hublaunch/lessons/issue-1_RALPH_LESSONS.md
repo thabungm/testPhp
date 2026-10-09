@@ -49,3 +49,19 @@ This file persists context across agent sessions. Update it as you work.
   checking for the binary first.
 - Direct lint + test rerun: same zero-error, 7/7-pass result as before. No src/public/tests
   changes made this pass either.
+
+## 2026-10-09 Root-cause fix (3rd occurrence)
+- Confirmed `make` is not installable in this sandbox either (`apt-get install make` →
+  "Package 'make' has no installation candidate"). This container will never have `make`,
+  so re-verifying each time just wastes a cycle.
+- Real fix: the `RALPH_CHECK_COMMANDS` / `RALPH_REGRESSION_COMMANDS` blocks in `ralph.md`
+  (which the harness actually `eval`s) were hardcoded to `make lint` / `make test`. Changed
+  them to call the underlying commands directly:
+  - `RALPH_CHECK_COMMANDS`: `find src -name "*.php" -print0 | xargs -0 -n1 php -l`
+  - `RALPH_REGRESSION_COMMANDS`: `vendor/bin/phpunit tests`
+  The human-readable `## Setup` / `## Verification` prose and the `Makefile` itself are left
+  alone — `make install/lint/test/serve` still works for humans with `make` on PATH; only the
+  automated harness blocks were switched to not depend on it.
+- Re-ran both new commands directly: lint clean, 7/7 tests pass. No src/public/tests changes.
+- If `make` ever IS available in this environment and this needs to change back, confirm
+  `which make` succeeds before reverting.

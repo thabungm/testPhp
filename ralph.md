@@ -13,12 +13,12 @@ Install dependencies:
 Run `make lint` to syntax-check every file in `src/` with `php -l`, and `make test` to run the PHPUnit test suite in `tests/`. There is no build step — this is a pure PHP library with no compilation.
 
 <!-- RALPH_CHECK_COMMANDS
-make lint
+find src -name "*.php" -print0 | xargs -0 -n1 php -l
 RALPH_CHECK_COMMANDS_END -->
 
 <!-- RALPH_BUILD_COMMANDS
 RALPH_BUILD_COMMANDS_END -->
 
 <!-- RALPH_REGRESSION_COMMANDS
-make test
+vendor/bin/phpunit tests
 RALPH_REGRESSION_COMMANDS_END -->
