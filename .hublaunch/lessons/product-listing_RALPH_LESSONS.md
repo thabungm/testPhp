@@ -19,7 +19,10 @@ This file persists context across agent sessions. Update it as you work.
 - Verified served bytes identical to source via `php -S localhost:8000 -t public` + curl diff.
 
 ## Things to Avoid
-- Don't call `make` — not present.
+- Don't call `make` — not present. Running `make lint`/`make test` fails with
+  `command not found`; this is NOT a code error. Run the Makefile target's
+  underlying command directly instead (see Key Discoveries above) and treat
+  a clean result as lint passing.
 
 ## Files Modified
 - public/index.html (new) — product listing page, 6 products (name + price only)
