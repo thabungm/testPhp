@@ -8,7 +8,15 @@ This file persists context across agent sessions. Update it as you work.
 - Blockers: None
 
 ## Key Discoveries
-- `make` is NOT installed in this container. Run the Makefile targets directly:
+- Regression run on 2026-10-13 failed with `make: command not found` because
+  `make` was not installed in that container, NOT because of a code
+  regression. The regression harness (ralph-run.sh) invokes `make` directly,
+  so a missing binary surfaces as a full suite failure.
+  Fix: `sudo apt-get update && sudo apt-get install -y make` — the package
+  was available in apt, just not installed. After install, `make lint` and
+  `make test` both pass cleanly (5/5 phpunit tests, 0 lint errors).
+- If `make` is ever missing again and can't be installed, Makefile targets
+  can be run directly:
   - lint: `find src -name "*.php" -print0 | xargs -0 -n1 php -l`
   - test: `vendor/bin/phpunit tests` (run `composer install` first; vendor/ absent initially)
 - php 8.3 and composer available at /usr/bin/php and /usr/local/bin/composer.
@@ -17,12 +25,12 @@ This file persists context across agent sessions. Update it as you work.
 - Static single-file deliverable per plan: public/index.html with embedded CSS, no PHP/JS/external resources.
 - Verified well-formedness via PHP DOMDocument (0 fatal parse errors).
 - Verified served bytes identical to source via `php -S localhost:8000 -t public` + curl diff.
+- Installing `make` via apt resolved the "regression" — no source changes were needed.
 
 ## Things to Avoid
-- Don't call `make` — not present. Running `make lint`/`make test` fails with
-  `command not found`; this is NOT a code error. Run the Makefile target's
-  underlying command directly instead (see Key Discoveries above) and treat
-  a clean result as lint passing.
+- Don't assume a missing-`make` failure means the code regressed — check
+  `which make` first. Try installing it (`sudo apt-get install -y make`)
+  before falling back to running the underlying lint/test commands manually.
 
 ## Files Modified
 - public/index.html (new) — product listing page, 6 products (name + price only)
