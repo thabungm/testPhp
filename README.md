@@ -14,3 +14,11 @@ make install
 make lint   # php -l syntax check on every file in src/
 make test   # vendor/bin/phpunit tests
 ```
+
+## Product listing page
+
+`public/index.html` is a standalone static product listing page (self-contained HTML5 with embedded CSS, no PHP, no JavaScript, no external resources). It is an optional static asset and does not change the headless calculator library. View it by opening the file directly in a browser, or serve it locally:
+
+```bash
+php -S localhost:8000 -t public   # then visit http://localhost:8000/
+```
