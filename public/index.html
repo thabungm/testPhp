@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shop — Product Listing</title>
+  <style>
+    :root { --gap: 1rem; }
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+           margin: 0; padding: 2rem; color: #1a1a1a; background: #fafafa; }
+    h1 { font-size: 1.75rem; margin: 0 0 1.5rem; }
+    .products { list-style: none; margin: 0; padding: 0;
+                display: grid; gap: var(--gap);
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+    .product { background: #fff; border: 1px solid #e5e5e5; border-radius: 8px;
+               padding: 1rem; }
+    .product__name { font-size: 1rem; font-weight: 600; margin: 0 0 .5rem; }
+    .product__price { font-size: 1.125rem; color: #0a7d2c; margin: 0; }
+  </style>
+</head>
+<body>
+  <h1>Our Products</h1>
+  <ul class="products">
+    <li class="product">
+      <p class="product__name">Classic T-Shirt</p>
+      <p class="product__price">$19.99</p>
+    </li>
+    <li class="product">
+      <p class="product__name">Canvas Tote Bag</p>
+      <p class="product__price">$12.50</p>
+    </li>
+    <li class="product">
+      <p class="product__name">Ceramic Mug</p>
+      <p class="product__price">$9.00</p>
+    </li>
+    <li class="product">
+      <p class="product__name">Baseball Cap</p>
+      <p class="product__price">$15.75</p>
+    </li>
+    <li class="product">
+      <p class="product__name">Water Bottle</p>
+      <p class="product__price">$22.00</p>
+    </li>
+    <li class="product">
+      <p class="product__name">Notebook</p>
+      <p class="product__price">$6.25</p>
+    </li>
+  </ul>
+</body>
+</html>
